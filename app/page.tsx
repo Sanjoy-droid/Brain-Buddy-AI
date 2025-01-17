@@ -1,101 +1,74 @@
-import Image from "next/image";
+"use client";
+import {
+  MessageCircle,
+  Sparkles,
+  Zap,
+  Shield,
+  ArrowRight,
+  MessageSquareIcon,
+} from "lucide-react";
+import Cards from "./components/Cards";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="relative min-h-screen bg-black overflow-hidden">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]" />
+      <div className="fixed inset-0">
+        <div className="absolute inset-0 bg-gradient-to-tr from-violet-500/5 via-transparent to-emerald-500/5 animate-[gradient_8s_ease-in-out_infinite]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[radial-gradient(circle_400px_at_center,#fbfbfb36,transparent)] animate-[pulse_4s_ease-in-out_infinite]" />
+      </div>
+      {/* Main Content */}
+      <main className="relative">
+        {/* Hero Section */}
+        <section className="min-h-screen flex flex-col items-start justify-center px-4 pb-40">
+          <div className="max-w-6xl mx-auto text-center">
+            {/* Floating Badge */}
+            <div className="inline-flex animate-[bounce_3s_ease-in-out_infinite]">
+              <span className="px-4 py-2 rounded-full border border-gray-800 bg-gray-900/50 backdrop-blur-xl text-sm text-gray-400">
+                <span className="text-emerald-500">AI</span> Powered
+                Intelligence
+              </span>
+            </div>
+            {/* Main Heading */}
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight animate-[slideDown_0.5s_ease-out] mt-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-blue-400 to-emerald-400 animate-[gradient_3s_ease-in-out_infinite]">
+                Next-Gen AI Chat Assistant
+              </span>
+            </h1>
+            {/* Subheading */}
+            <p className="max-w-2xl mx-auto text-xl text-gray-400 animate-[fadeIn_0.5s_ease-out_0.3s] mt-6">
+              Experience the future of conversation with our advanced AI
+              chatbot. Powered by cutting-edge technology for human-like
+              interactions.
+            </p>
+            <Cards />
+            <div className="flex flex-wrap justify-center gap-4 animate-[slideUp_0.5s_ease-out_0.5s] ">
+              {/* input */}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+              <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-2xl">
+                <div className="bg-slate-900 p-4 rounded-xl shadow-lg flex items-center space-x-4">
+                  <div className="text-[#63e] text-2xl">
+                    <MessageCircle />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Ask me anything..."
+                    className="flex-1 bg-transparent text-white placeholder-gray-300 border-b-2 border-[#63e] focus:outline-none focus:ring-0 focus:border-[#63e] p-2 text-lg"
+                  />
+                  <button className="bg-[#63e] text-black px-6 py-3 rounded-full hover:scale-105 transform transition-all">
+                    Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Floating Elements */}
+          <div className="absolute top-1/4 left-10 w-24 h-24 bg-violet-500/10 rounded-full blur-3xl animate-[float_8s_ease-in-out_infinite]" />
+          <div className="absolute bottom-1/4 right-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl animate-[float_6s_ease-in-out_infinite_reverse]" />
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }
