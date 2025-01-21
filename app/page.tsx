@@ -1,4 +1,8 @@
 "use client";
+
+import { useState } from "react";
+import Link from "next/link";
+
 import {
   MessageCircle,
   Sparkles,
@@ -10,6 +14,25 @@ import {
 import Cards from "./components/Cards";
 
 export default function Home() {
+  const chatbotPrompts = [
+    {
+      prompt: "Can you help me plan my day?",
+      description: "Ask the chatbot to create a personalized daily schedule.",
+    },
+    {
+      prompt: "Tell me a fun fact I probably don't know.",
+      description:
+        "Engage the chatbot to share an intriguing fact from a range of topics.",
+    },
+    {
+      prompt: "Write a quick email.",
+      description:
+        "Let the chatbot draft a professional email that expresses regret for missing a meeting. ",
+    },
+  ];
+
+  const [promptValue, setPromptValue] = useState("");
+
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
       {/* Animated Background Elements */}
@@ -33,7 +56,7 @@ export default function Home() {
             {/* Main Heading */}
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight animate-[slideDown_0.5s_ease-out] mt-4">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-400 via-blue-400 to-emerald-400 animate-[gradient_3s_ease-in-out_infinite]">
-                Next-Gen AI Chat Assistant
+                Brain-Buddy AI
               </span>
             </h1>
             {/* Subheading */}
@@ -42,7 +65,10 @@ export default function Home() {
               chatbot. Powered by cutting-edge technology for human-like
               interactions.
             </p>
-            <Cards />
+            <Cards
+              chatbotPrompts={chatbotPrompts}
+              setPromptValue={setPromptValue}
+            />
             <div className="flex flex-wrap justify-center gap-4 animate-[slideUp_0.5s_ease-out_0.5s] ">
               {/* input */}
 
@@ -52,13 +78,21 @@ export default function Home() {
                     <MessageCircle />
                   </div>
                   <input
+                    value={promptValue}
+                    onChange={(e) => setPromptValue(e.target.value)}
                     type="text"
                     placeholder="Ask me anything..."
                     className="flex-1 bg-transparent text-white placeholder-gray-300 border-b-2 border-[#63e] focus:outline-none focus:ring-0 focus:border-[#63e] p-2 text-lg"
                   />
-                  <button className="bg-[#63e] text-black px-6 py-3 rounded-full hover:scale-105 transform transition-all">
+                  <Link
+                    href={{
+                      pathname: "/conversation",
+                      query: { prompt: promptValue },
+                    }}
+                    className="bg-[#63e] text-black px-6 py-3 rounded-full hover:scale-105 transform transition-all"
+                  >
                     Send
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>

@@ -6,26 +6,14 @@ type CardProps = {
   prompt: string;
   description: string;
 };
-const page = () => {
-  const chatbotPrompts = [
-    {
-      prompt: "Can you help me plan my day?",
-      description: "Ask the chatbot to create a personalized daily schedule.",
-    },
-    {
-      prompt: "Tell me a fun fact I probably don't know.",
-      description:
-        "Engage the chatbot to share an intriguing fact from a range of topics.",
-    },
-    {
-      prompt: "Write a quick email.",
-      description:
-        "Let the chatbot draft a professional email that expresses regret for missing a meeting. ",
-    },
-  ];
-
-  const [promptValue, setPromptValue] = useState("");
-  // console.log(promptValue);
+type chatbotPromptsProps = {
+  chatbotPrompts: {
+    prompt: string;
+    description: string;
+  }[];
+  setPromptValue: React.Dispatch<React.SetStateAction<string>>;
+};
+const page = ({ chatbotPrompts, setPromptValue }: chatbotPromptsProps) => {
   return (
     <>
       {/* Feature Cards */}
