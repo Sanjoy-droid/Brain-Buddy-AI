@@ -7,13 +7,19 @@ type CardProps = {
   description: string;
 };
 type chatbotPromptsProps = {
+  setPath: React.Dispatch<React.SetStateAction<string>>; // Correct type for setPath
   chatbotPrompts: {
     prompt: string;
     description: string;
   }[];
   setPromptValue: React.Dispatch<React.SetStateAction<string>>;
 };
-const page = ({ chatbotPrompts, setPromptValue }: chatbotPromptsProps) => {
+const page = ({
+  chatbotPrompts,
+  setPromptValue,
+  setPath,
+}: chatbotPromptsProps) => {
+  // console.log(chatbotPrompts[0]);
   return (
     <>
       {/* Feature Cards */}
@@ -22,6 +28,13 @@ const page = ({ chatbotPrompts, setPromptValue }: chatbotPromptsProps) => {
           <div
             key={index}
             onClick={() => {
+              if (index === 0) {
+                setPath("myday");
+              } else if (index === 1) {
+                setPath("funfact");
+              } else if (index === 2) {
+                setPath("email");
+              }
               setPromptValue(card.prompt);
             }}
             className="group relative p-4 rounded-2xl border border-gray-800 bg-gray-900/50 backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 hover:bg-gray-900/80 h-52 cursor-pointer"

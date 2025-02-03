@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-
+import { useRouter } from "next/router";
 import {
   MessageCircle,
   Sparkles,
@@ -16,15 +16,18 @@ import Cards from "./components/Cards";
 export default function Home() {
   const chatbotPrompts = [
     {
+      id: 1,
       prompt: "Can you help me plan my day?",
       description: "Ask the chatbot to create a personalized daily schedule.",
     },
     {
+      id: 2,
       prompt: "Tell me a fun fact I probably don't know.",
       description:
         "Engage the chatbot to share an intriguing fact from a range of topics.",
     },
     {
+      id: 3,
       prompt: "Write a quick email.",
       description:
         "Let the chatbot draft a professional email that expresses regret for missing a meeting. ",
@@ -32,6 +35,13 @@ export default function Home() {
   ];
 
   const [promptValue, setPromptValue] = useState("");
+
+  const handleSend = () => {
+    if (promptValue.trim()) {
+      localStorage.setItem("initialPrompt", promptValue);
+    }
+  };
+  const [path, setPath] = useState("");
 
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
@@ -66,6 +76,7 @@ export default function Home() {
               interactions.
             </p>
             <Cards
+              setPath={setPath}
               chatbotPrompts={chatbotPrompts}
               setPromptValue={setPromptValue}
             />
@@ -82,14 +93,12 @@ export default function Home() {
                     onChange={(e) => setPromptValue(e.target.value)}
                     type="text"
                     placeholder="Ask me anything..."
-                    className="flex-1 bg-transparent text-white placeholder-gray-300 border-b-2 border-[#63e] focus:outline-none focus:ring-0 focus:border-[#63e] p-2 text-lg"
+                    className="flex-1 bg-transparent text-white placeholder-gray-300 border-b-2 border-[#63e] focus:outline-none focus:ring-0 focus:border-[#63e] p-2 text-lg "
                   />
                   <Link
-                    href={{
-                      pathname: "/conversation",
-                      query: { prompt: promptValue },
-                    }}
-                    className="bg-[#63e] text-black px-6 py-3 rounded-full hover:scale-105 transform transition-all"
+                    href={`/conversation/${path}`}
+                    onClick={handleSend}
+                    className="bg-[#63e] text-black px-6 py-3 rounded-full hover:scale-105 transform transition-all cursor-pointer"
                   >
                     Send
                   </Link>
