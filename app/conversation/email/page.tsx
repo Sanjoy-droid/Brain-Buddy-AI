@@ -7,7 +7,6 @@ import {
   SendHorizontal,
 } from "lucide-react";
 import Link from "next/link";
-
 import axios from "axios";
 
 interface Message {
@@ -17,7 +16,7 @@ interface Message {
   timestamp: number;
 }
 
-const Conversation = () => {
+const QuickEmail = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -58,7 +57,7 @@ const Conversation = () => {
   // Update local storage and fetched messages
   useEffect(() => {
     const storedMessages = JSON.parse(
-      localStorage.getItem("conversation") || "[]",
+      localStorage.getItem("emailMessage") || "[]",
     );
 
     const newMessages = messages.filter((message) => {
@@ -69,7 +68,7 @@ const Conversation = () => {
 
     if (newMessages.length > 0) {
       const combinedMessages = [...storedMessages, ...newMessages];
-      localStorage.setItem("conversation", JSON.stringify(combinedMessages));
+      localStorage.setItem("emailMessage", JSON.stringify(combinedMessages));
       setFetchedMessages(combinedMessages);
     }
   }, [messages]);
@@ -77,7 +76,7 @@ const Conversation = () => {
   // Initial fetch of messages
   useEffect(() => {
     setFetchedMessages(
-      JSON.parse(localStorage.getItem("conversation") || "[]"),
+      JSON.parse(localStorage.getItem("emailMessage") || "[]"),
     );
   }, []);
 
@@ -144,7 +143,7 @@ const Conversation = () => {
   // Clear chat history
   const handleClearHistory = () => {
     setMessages([]);
-    localStorage.removeItem("conversation");
+    localStorage.removeItem("emailMessage");
 
     mountedRef.current = false;
     setShowModal(false);
@@ -313,4 +312,4 @@ const Conversation = () => {
   );
 };
 
-export default Conversation;
+export default QuickEmail;

@@ -1,8 +1,12 @@
-// "use client";
-
 "use client";
-import React, { useEffect, useState, useRef, useMemo } from "react";
-import { Send, Trash2, MessageCircle, Loader2 } from "lucide-react";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  LoaderCircle,
+  MessageCircle,
+  Trash2,
+  SendHorizontal,
+} from "lucide-react";
+import Link from "next/link";
 import axios from "axios";
 
 interface Message {
@@ -12,34 +16,84 @@ interface Message {
   timestamp: number;
 }
 
-const MyDay: React.FC = () => {
+const FunFact = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const mountedRef = useRef(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const conversationContainerRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom when messages change
+  const [fetchedMessages, setFetchedMessages] = useState<Message[]>([]);
+
+  // Scroll to bottom function
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  };
+
+  // Always scroll to bottom when messages change
   useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop =
-        messagesContainerRef.current.scrollHeight;
+    const timer = setTimeout(scrollToBottom, 400);
+    return () => clearTimeout(timer);
+  }, [messages]);
+
+  // Focus on input
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [loading]);
+
+  // Update local storage and fetched messages
+  useEffect(() => {
+    const storedMessages = JSON.parse(
+      localStorage.getItem("funfactMessage") || "[]",
+    );
+
+    const newMessages = messages.filter((message) => {
+      return !storedMessages.some(
+        (storedMessage: Message) => storedMessage.id === message.id,
+      );
+    });
+
+    if (newMessages.length > 0) {
+      const combinedMessages = [...storedMessages, ...newMessages];
+      localStorage.setItem("funfactMessage", JSON.stringify(combinedMessages));
+      setFetchedMessages(combinedMessages);
     }
   }, [messages]);
 
-  // Auto-resize textarea
+  // Initial fetch of messages
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.style.height = "auto";
-      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`;
-    }
-  }, [query]);
+    setFetchedMessages(
+      JSON.parse(localStorage.getItem("funfactMessage") || "[]"),
+    );
+  }, []);
 
+  // Handle initial prompt
+  useEffect(() => {
+    const initialPrompt = localStorage.getItem("initialPrompt");
+
+    if (initialPrompt && !mountedRef.current) {
+      mountedRef.current = true;
+      localStorage.removeItem("initialPrompt");
+      handleGenerate(initialPrompt);
+    }
+  }, []);
+
+  // Generate chat response
   const handleGenerate = async (textToSend: string) => {
     if (!textToSend.trim() || loading) return;
-
     setLoading(true);
     setError("");
 
@@ -50,9 +104,6 @@ const MyDay: React.FC = () => {
         isUser: true,
         timestamp: Date.now(),
       };
-
-      setMessages((prev) => [...prev, userMessage]);
-      setQuery("");
 
       const response = await axios({
         url: process.env.NEXT_PUBLIC_GEMINI_API_URL,
@@ -70,7 +121,8 @@ const MyDay: React.FC = () => {
         timestamp: Date.now(),
       };
 
-      setMessages((prev) => [...prev, aiMessage]);
+      setMessages((prev) => [...prev, userMessage, aiMessage]);
+      setFetchedMessages((prev) => [...prev, userMessage, aiMessage]);
     } catch (error) {
       console.error("Error:", error);
       setError("Failed to generate response. Please try again.");
@@ -79,152 +131,185 @@ const MyDay: React.FC = () => {
     }
   };
 
+  // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (query.trim() && !loading) {
       handleGenerate(query);
+      setQuery("");
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      if (query.trim() && !loading) {
-        handleGenerate(query);
-      }
-    }
-  };
-
+  // Clear chat history
   const handleClearHistory = () => {
-    if (window.confirm("Are you sure you want to clear all messages?")) {
-      setMessages([]);
-    }
-  };
+    setMessages([]);
+    localStorage.removeItem("funfactMessage");
 
-  // Memoized time formatting
-  const formatTime = useMemo(() => {
-    return (timestamp: number) => {
-      const date = new Date(timestamp);
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    };
-  }, []);
+    mountedRef.current = false;
+    setShowModal(false);
+
+    window.location.reload();
+  };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white">
-      <div className="flex items-center justify-between p-4 bg-[#0f3460]/30 backdrop-blur-md shadow-lg">
-        <div className="flex items-center space-x-3">
-          <MessageCircle className="w-8 h-8 text-blue-400" />
-          <h1 className="text-2xl font-bold tracking-wide">My Day Assistant</h1>
+    <>
+      <div className="relative min-h-screen bg-gradient-to-br from-zinc-900 via-black to-slate-900 text-gray-50 overflow-hidden">
+        {/* Animated Background */}
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(30,30,30,0.1)_1px,transparent_1px),linear-gradient(to_bottom,rgba(30,30,30,0.1)_1px,transparent_1px)] bg-[size:32px_32px] opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/10 via-transparent to-emerald-900/10 animate-gradient-shift opacity-50" />
         </div>
-        <button
-          onClick={handleClearHistory}
-          disabled={messages.length === 0}
-          className="p-2 rounded-full hover:bg-red-500/20 transition-colors duration-300 group"
-        >
-          <Trash2
-            className={`w-6 h-6 ${
-              messages.length === 0
-                ? "text-gray-500"
-                : "text-red-500 group-hover:scale-110 transition-transform"
-            }`}
-          />
-        </button>
-      </div>
 
-      <div
-        ref={messagesContainerRef}
-        className="flex-grow overflow-y-auto p-4 space-y-4 custom-scrollbar"
-      >
-        {messages.map((message) => (
+        {/* Main Container */}
+        <div className="relative z-10 max-w-6xl mx-auto px-4 py-4 min-h-screen flex flex-col ">
+          {/* Sticky Header */}
+          <header className="sticky top-0 z-20 mb-2 bg-zinc-900/60 backdrop-blur-xl py-4 px-6  rounded-xl">
+            <div className="flex justify-between items-center">
+              <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-blue-500 to-emerald-400 animate-text-shimmer">
+                <Link href="/" className="text-4xl font-extrabold">
+                  Brain Buddy
+                </Link>
+              </h1>
+
+              {/* Clear History Button */}
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center justify-center p-2 text-sm bg-red-900 rounded-lg hover:bg-red-700 transition-all disabled:opacity-50"
+                disabled={fetchedMessages.length === 0}
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+          </header>
+
+          {/* Conversation Container */}
+
           <div
-            key={message.id}
-            className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}
+            ref={conversationContainerRef}
+            className="flex-1 bg-zinc-900/60 backdrop-blur-xl rounded-2xl border border-zinc-800/50 shadow-2xl  overflow-y-auto scrollbar scrollbar-track-zinc-800 scrollbar-thumb-zinc-600"
           >
-            <div
-              className={`
-                max-w-[80%] p-3 rounded-2xl relative 
-                ${
-                  message.isUser
-                    ? "bg-blue-600/80 text-white"
-                    : "bg-gray-700/50 text-gray-100"
-                }
-                shadow-md mb-2
-              `}
-            >
-              <p className="text-sm leading-relaxed">{message.text}</p>
-              <span className="text-xs text-gray-300 opacity-70 block text-right mt-1 ">
-                {formatTime(message.timestamp)}
-              </span>
+            <div className="p-6 space-y-6 h-80 pb-6">
+              <div className="flex flex-col space-y-4  ">
+                {fetchedMessages?.map((message) => (
+                  <div
+                    key={message.id}
+                    className={`flex ${
+                      message.isUser ? "self-end" : "self-start"
+                    } max-w-[75%] w-fit`}
+                  >
+                    <div
+                      className={`
+                      ${
+                        message.isUser
+                          ? "bg-gradient-to-br from-violet-600/70 to-indigo-800/70 text-white rounded-tr-sm h-16"
+                          : " bg-zinc-800/80 text-gray-200 rounded-tl-sm"
+                      }
+                      rounded-3xl p-4 shadow-lg transform transition-all hover:scale-[1.02]
+                    `}
+                    >
+                      <p>{message.text}</p>
+                      <span
+                        className={`
+                        text-xs block mt-1 
+                        ${
+                          message.isUser
+                            ? "text-gray-200 text-right"
+                            : "text-gray-500 text-left"
+                        }
+                      `}
+                      >
+                        {new Date(message.timestamp)
+                          .toLocaleTimeString()
+                          .substring(0, 5)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
             </div>
           </div>
-        ))}
-      </div>
 
-      {error && (
-        <div className="px-4 mb-2 text-center">
-          <p className="text-red-400 text-sm bg-red-900/30 p-2 rounded-lg">
-            {error}
-          </p>
-        </div>
-      )}
-
-      <div className="p-4 bg-[#0f3460]/30 backdrop-blur-md">
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-end space-x-2 max-w-3xl mx-auto"
-        >
-          <textarea
-            ref={inputRef}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Type your message..."
-            rows={1}
-            disabled={loading}
-            className="
-              flex-grow 
-              bg-gray-800/50 
-              text-white 
-              rounded-xl 
-              p-3 
-              resize-none 
-              max-h-32 
-              overflow-y-auto 
-              focus:outline-none 
-              focus:ring-2 
-              focus:ring-blue-500
-              transition-all
-              duration-300
-            "
-          />
-          <button
-            type="submit"
-            disabled={loading || !query.trim()}
-            className={`
-              p-3 
-              rounded-full 
-              transition-all 
-              duration-300 
-              ${
-                loading || !query.trim()
-                  ? "bg-gray-600 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95"
-              }
-            `}
-          >
-            {loading ? (
-              <Loader2 className="w-6 h-6 animate-spin" />
-            ) : (
-              <Send className="w-6 h-6" />
+          {/* Sticky Input Area */}
+          <div className="sticky bottom-0 z-20 bg-zinc-800/60 backdrop-blur-xl rounded-full p-2 mt-2 border border-zinc-700/50 shadow-2xl focus-within:ring-2 focus-within:ring-emerald-500/50 transition-all duration-300">
+            {error && (
+              <p className="text-red-500 mb-2 text-sm text-center">{error}</p>
             )}
-          </button>
-        </form>
+            <form
+              className="flex items-center space-x-4"
+              onSubmit={handleSubmit}
+            >
+              <input
+                ref={inputRef}
+                placeholder="Type your message..."
+                className="flex-1 bg-transparent text-white placeholder-gray-400 px-8   text-lg focus:outline-none"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                disabled={loading}
+              />
+              <button
+                type="submit"
+                disabled={loading || !query.trim()}
+                className={` px-2 py-2 
+              rounded-3xl flex justify-center items-center 
+                ${loading || !query.trim() ? " cursor-not-allowed" : ""} 
+                transition-opacity
+              `}
+              >
+                {loading ? (
+                  <>
+                    <LoaderCircle
+                      className="  text-indigo-500  animate-spin"
+                      size={27}
+                    />
+                  </>
+                ) : (
+                  <SendHorizontal
+                    className="hover:text-white text-indigo-500"
+                    size={27}
+                  />
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* Clear History Modal */}
+          {showModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full mx-4">
+                <h2 className="text-lg font-semibold mb-4">
+                  Clear Chat History
+                </h2>
+                <p className="text-gray-300 mb-6">
+                  Are you sure you want to clear all messages?
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="px-4 py-2 text-sm rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleClearHistory}
+                    className="px-4 py-2 text-sm rounded-lg bg-red-800 hover:bg-red-700 transition-colors"
+                  >
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Floating Decorative Elements */}
+        <div className="fixed pointer-events-none">
+          <div className="absolute top-1/4 -left-12 w-64 h-64 bg-purple-900/20 rounded-full blur-3xl animate-blob" />
+          <div className="absolute bottom-1/4 -right-12 w-64 h-64 bg-emerald-900/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default MyDay;
+export default FunFact;

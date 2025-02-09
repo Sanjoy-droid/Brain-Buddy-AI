@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
+
+import { usePathname } from "next/navigation";
 import {
   MessageCircle,
   Sparkles,
@@ -43,6 +44,16 @@ export default function Home() {
   };
   const [path, setPath] = useState("");
 
+  const pathname = usePathname();
+
+  const handleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && promptValue.trim()) {
+      e.preventDefault();
+      handleSend();
+
+      window.location.href = `/conversation/${path}`;
+    }
+  };
   return (
     <div className="relative min-h-screen bg-black overflow-hidden">
       {/* Animated Background Elements */}
@@ -82,23 +93,28 @@ export default function Home() {
             />
             <div className="flex flex-wrap justify-center gap-4 animate-[slideUp_0.5s_ease-out_0.5s] ">
               {/* input */}
-
-              <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-2xl">
-                <div className="bg-slate-900 p-4 rounded-xl shadow-lg flex items-center space-x-4">
-                  <div className="text-[#63e] text-2xl">
+              <div className="fixed bottom-4 sm:bottom-8 left-1/2 transform -translate-x-1/2 w-[95%] sm:w-[90%] md:w-[85%] max-w-2xl mx-auto px-2 sm:px-0">
+                <div className="bg-slate-900 p-3 sm:p-4 rounded-xl shadow-lg flex items-center space-x-2 sm:space-x-4">
+                  <div className="text-[#63e] text-xl sm:text-2xl">
                     <MessageCircle />
                   </div>
                   <input
                     value={promptValue}
                     onChange={(e) => setPromptValue(e.target.value)}
+                    onKeyDown={handleEnterPress}
                     type="text"
                     placeholder="Ask me anything..."
-                    className="flex-1 bg-transparent text-white placeholder-gray-300 border-b-2 border-[#63e] focus:outline-none focus:ring-0 focus:border-[#63e] p-2 text-lg "
+                    className="flex-1 bg-transparent text-white placeholder-gray-300 border-b-2 border-[#63e] focus-within:outline-none focus:border-[#63e] p-1 sm:p-2 text-base sm:text-lg min-w-0  "
                   />
                   <Link
                     href={`/conversation/${path}`}
                     onClick={handleSend}
-                    className="bg-[#63e] text-black px-6 py-3 rounded-full hover:scale-105 transform transition-all cursor-pointer"
+                    className={`bg-[#63e] text-gray-300 px-4 sm:px-6 py-2 sm:py-3 rounded-full transition-all whitespace-nowrap font-semibold
+              ${
+                promptValue.trim()
+                  ? "hover:scale-105 cursor-pointer"
+                  : "opacity-50 cursor-not-allowed pointer-events-none"
+              }`}
                   >
                     Send
                   </Link>
