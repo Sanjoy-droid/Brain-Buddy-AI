@@ -57,7 +57,7 @@ const QuickEmail = () => {
   // Update local storage and fetched messages
   useEffect(() => {
     const storedMessages = JSON.parse(
-      localStorage.getItem("emailMessage") || "[]",
+      sessionStorage.getItem("emailMessage") || "[]",
     );
 
     const newMessages = messages.filter((message) => {
@@ -68,7 +68,7 @@ const QuickEmail = () => {
 
     if (newMessages.length > 0) {
       const combinedMessages = [...storedMessages, ...newMessages];
-      localStorage.setItem("emailMessage", JSON.stringify(combinedMessages));
+      sessionStorage.setItem("emailMessage", JSON.stringify(combinedMessages));
       setFetchedMessages(combinedMessages);
     }
   }, [messages]);
@@ -76,17 +76,17 @@ const QuickEmail = () => {
   // Initial fetch of messages
   useEffect(() => {
     setFetchedMessages(
-      JSON.parse(localStorage.getItem("emailMessage") || "[]"),
+      JSON.parse(sessionStorage.getItem("emailMessage") || "[]"),
     );
   }, []);
 
   // Handle initial prompt
   useEffect(() => {
-    const initialPrompt = localStorage.getItem("initialPrompt");
+    const initialPrompt = sessionStorage.getItem("initialPrompt");
 
     if (initialPrompt && !mountedRef.current) {
       mountedRef.current = true;
-      localStorage.removeItem("initialPrompt");
+      sessionStorage.removeItem("initialPrompt");
       handleGenerate(initialPrompt);
     }
   }, []);
@@ -143,7 +143,7 @@ const QuickEmail = () => {
   // Clear chat history
   const handleClearHistory = () => {
     setMessages([]);
-    localStorage.removeItem("emailMessage");
+    sessionStorage.removeItem("emailMessage");
 
     mountedRef.current = false;
     setShowModal(false);

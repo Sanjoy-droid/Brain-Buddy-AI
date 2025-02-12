@@ -39,7 +39,7 @@ export default function Home() {
 
   const handleSend = () => {
     if (promptValue.trim()) {
-      localStorage.setItem("initialPrompt", promptValue);
+      sessionStorage.setItem("initialPrompt", promptValue);
     }
   };
   const [path, setPath] = useState("");

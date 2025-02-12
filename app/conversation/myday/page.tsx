@@ -57,7 +57,7 @@ const MyDay = () => {
   // Update local storage and fetched messages
   useEffect(() => {
     const storedMessages = JSON.parse(
-      localStorage.getItem("allMessage") || "[]",
+      sessionStorage.getItem("allMessage") || "[]",
     );
 
     const newMessages = messages.filter((message) => {
@@ -68,23 +68,25 @@ const MyDay = () => {
 
     if (newMessages.length > 0) {
       const combinedMessages = [...storedMessages, ...newMessages];
-      localStorage.setItem("allMessage", JSON.stringify(combinedMessages));
+      sessionStorage.setItem("allMessage", JSON.stringify(combinedMessages));
       setFetchedMessages(combinedMessages);
     }
   }, [messages]);
 
   // Initial fetch of messages
   useEffect(() => {
-    setFetchedMessages(JSON.parse(localStorage.getItem("allMessage") || "[]"));
+    setFetchedMessages(
+      JSON.parse(sessionStorage.getItem("allMessage") || "[]"),
+    );
   }, []);
 
   // Handle initial prompt
   useEffect(() => {
-    const initialPrompt = localStorage.getItem("initialPrompt");
+    const initialPrompt = sessionStorage.getItem("initialPrompt");
 
     if (initialPrompt && !mountedRef.current) {
       mountedRef.current = true;
-      localStorage.removeItem("initialPrompt");
+      sessionStorage.removeItem("initialPrompt");
       handleGenerate(initialPrompt);
     }
   }, []);
@@ -141,7 +143,7 @@ const MyDay = () => {
   // Clear chat history
   const handleClearHistory = () => {
     setMessages([]);
-    localStorage.removeItem("allMessage");
+    sessionStorage.removeItem("allMessage");
 
     mountedRef.current = false;
     setShowModal(false);

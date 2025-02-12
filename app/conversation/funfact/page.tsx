@@ -57,18 +57,21 @@ const FunFact = () => {
   // Update local storage and fetched messages
   useEffect(() => {
     const storedMessages = JSON.parse(
-      localStorage.getItem("funfactMessage") || "[]",
+      sessionStorage.getItem("funfactMessage") || "[]"
     );
 
     const newMessages = messages.filter((message) => {
       return !storedMessages.some(
-        (storedMessage: Message) => storedMessage.id === message.id,
+        (storedMessage: Message) => storedMessage.id === message.id
       );
     });
 
     if (newMessages.length > 0) {
       const combinedMessages = [...storedMessages, ...newMessages];
-      localStorage.setItem("funfactMessage", JSON.stringify(combinedMessages));
+      sessionStorage.setItem(
+        "funfactMessage",
+        JSON.stringify(combinedMessages)
+      );
       setFetchedMessages(combinedMessages);
     }
   }, [messages]);
@@ -76,17 +79,17 @@ const FunFact = () => {
   // Initial fetch of messages
   useEffect(() => {
     setFetchedMessages(
-      JSON.parse(localStorage.getItem("funfactMessage") || "[]"),
+      JSON.parse(sessionStorage.getItem("funfactMessage") || "[]")
     );
   }, []);
 
   // Handle initial prompt
   useEffect(() => {
-    const initialPrompt = localStorage.getItem("initialPrompt");
+    const initialPrompt = sessionStorage.getItem("initialPrompt");
 
     if (initialPrompt && !mountedRef.current) {
       mountedRef.current = true;
-      localStorage.removeItem("initialPrompt");
+      sessionStorage.removeItem("initialPrompt");
       handleGenerate(initialPrompt);
     }
   }, []);
@@ -143,7 +146,7 @@ const FunFact = () => {
   // Clear chat history
   const handleClearHistory = () => {
     setMessages([]);
-    localStorage.removeItem("funfactMessage");
+    sessionStorage.removeItem("funfactMessage");
 
     mountedRef.current = false;
     setShowModal(false);
