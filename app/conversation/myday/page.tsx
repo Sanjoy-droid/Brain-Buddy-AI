@@ -231,18 +231,18 @@ const MyDay = () => {
           </div>
 
           {/* Sticky Input Area */}
-          <div className="sticky bottom-0 z-20 bg-zinc-800/60 backdrop-blur-xl rounded-full p-2 mt-2 border border-zinc-700/50 shadow-2xl focus-within:ring-2 focus-within:ring-emerald-500/50 transition-all duration-300">
+          <div className="sticky bottom-0 z-20 bg-zinc-800/60 backdrop-blur-xl rounded-full p-2 mt-2 border border-zinc-700/50 shadow-2xl focus-within:ring-2 focus-within:ring-emerald-500/50 transition-all duration-300 w-full">
             {error && (
               <p className="text-red-500 mb-2 text-sm text-center">{error}</p>
             )}
             <form
-              className="flex items-center space-x-4"
+              className="flex items-center gap-2 w-full px-2"
               onSubmit={handleSubmit}
             >
               <input
                 ref={inputRef}
                 placeholder="Type your message..."
-                className="flex-1 bg-transparent text-white placeholder-gray-400 px-8   text-lg focus:outline-none"
+                className="flex-1 min-w-0 bg-transparent text-white placeholder-gray-400 px-4 py-2 text-base sm:text-lg focus:outline-none"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 disabled={loading}
@@ -250,23 +250,17 @@ const MyDay = () => {
               <button
                 type="submit"
                 disabled={loading || !query.trim()}
-                className={` px-2 py-2 
-              rounded-3xl flex justify-center items-center 
-                ${loading || !query.trim() ? " cursor-not-allowed" : ""} 
-                transition-opacity
-              `}
+                className="shrink-0 p-2 rounded-full flex justify-center items-center transition-all"
               >
                 {loading ? (
-                  <>
-                    <LoaderCircle
-                      className="  text-indigo-500  animate-spin"
-                      size={27}
-                    />
-                  </>
+                  <LoaderCircle
+                    className="text-indigo-500 animate-spin"
+                    size={24}
+                  />
                 ) : (
                   <SendHorizontal
-                    className="hover:text-white text-indigo-500"
-                    size={27}
+                    className={`${query.trim() ? "text-indigo-500 hover:text-white" : "text-gray-400"}`}
+                    size={24}
                   />
                 )}
               </button>
