@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Brain-Buddy-AI
 
-## Getting Started
+Brain-Buddy-AI is a full-stack AI chatbot application built with Next.js, leveraging the powerful Gemini API to deliver intelligent, human-like conversations.
 
-First, run the development server:
+## 🚀 Features
+
+- AI-powered chatbot with natural language understanding
+- Seamless Next.js frontend with React 19
+- API integration using Axios
+- Tailwind CSS for sleek UI design
+- Optimized performance with Next.js 15
+
+## 📦 Tech Stack
+
+- **Framework:** Next.js 15
+- **Frontend:** React 19, Tailwind CSS
+- **API Handling:** Axios
+- **Backend:** Integrated with Gemini API
+
+## 🛠️ Setup & Installation
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/Sanjoy-droid/Brain-Buddy-AI
+cd Brain-Buddy-Ai
+```
+
+### 2️⃣ Install dependencies
+
+```bash
+npm install
+```
+
+### 3️⃣ Set up environment variables
+
+Create a `.env.local` file in the root directory and add the following:
+
+```env
+NEXT_PUBLIC_GEMINI_API_URL=<your_api_url>
+GEMINI_API_KEY=<your_api_key>
+GEMINI_API_URL=<your_api_url>
+```
+
+### 4️⃣ Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to access the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🏗️ Build & Deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To create a production build:
 
-## Learn More
+```bash
+npm run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+To start the production server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🚀 Deploy on Vercel
 
-## Deploy on Vercel
+The easiest way to deploy Brain-Buddy-AI is via Vercel. Simply connect your GitHub repository to Vercel and deploy.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+For more details, check out [Next.js Deployment Documentation](https://nextjs.org/docs/deployment).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📖 Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
+- [React Documentation](https://react.dev/) - Get started with React 19.
+
+## 🤝 Contributing
+
+Feel free to contribute by opening an issue or submitting a pull request!
+
+## 📜 License
+
+MIT License
